@@ -1,5 +1,5 @@
 import io
-from tkinter import Image
+from PIL import Image
 import streamlit as st
 import pandas as pd
 
