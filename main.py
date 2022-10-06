@@ -3,10 +3,11 @@ import os
 from PIL import Image
 import streamlit as st
 import pandas as pd
+import tensorflow as tf
 
 import numpy as np
-from MesoNet.classifiers import *
-from MesoNet.pipeline import *
+from classifiers import *
+from pipeline import *
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -19,26 +20,35 @@ def load_image():
 
 def mesonet_predict(image):
 
-    image_dir = "MesoNet/test_images/"
+    image_dir = "test_images"
 
-    os.rmdir(image_dir)
-    os.mkdir(image_dir)
-    image.save(f'{image_dir}/image.png')
+    # os.rmdir(image_dir)
+    # os.mkdir(image_dir)
+    image.save(f'{image_dir}/df/image.jpg')
 
-    classifier = MesoInception4()
-    classifier.load('MesoNet/weights/MesoInception_DF.h5')
+    mesoInc4 = MesoInception4()
+    mesoInc4.load('weights/MesoInception_DF.h5')
 
     dataGenerator = ImageDataGenerator(rescale=1./255)
     generator = dataGenerator.flow_from_directory(
-        'MesoNet/test_images/',
+        "test_images/",
         target_size=(256, 256),
         batch_size=1,
         class_mode='binary',
         subset='training'
     )
 
-    X, y = generator.next()
-    st.write(f'Predicted: {classifier.predict(X)}\nReal Class: {y}')
+    # print(generator)
+
+    X, y = next(generator)
+    # print(X, y)
+    predicted = mesoInc4.predict(X)
+    if round(predicted[0][0]) == 0:
+        result = "DeepFake"
+    elif round(predicted[0][0]) == 1:
+        result = "Real"
+    st.write(f'Prediction: {result} Image')
+    st.write(f'Confidence: {predicted[0][0]}')
 
 
 def main():
