@@ -1,6 +1,9 @@
 import io
 import os
 from PIL import Image
+import cv2 as cv 
+from skimage import io as oi
+from PIL import Image 
 import streamlit as st
 import pandas as pd
 import tensorflow as tf
@@ -50,10 +53,25 @@ def mesonet_predict(image):
     st.write(f'Prediction: {result} Image')
     st.write(f'Confidence: {predicted[0][0]}')
 
+# def illuminate(image):
+
+#     image_2 = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+#     gamma = 0.5
+
+#     invGamma = 1 / gamma
+
+#     table = [((i / 255) ** invGamma) * 255 for i in range(256)]
+#     table = np.array(table, np.uint8)
+
+#     return cv.LUT(image_2, table)
+
 
 def main():
     st.title("Image DeepFake Detector")
     image = load_image()
+    illuminate = st.button("Illuminate Image")  
+    # if illuminate:
+    #     pass
     result = st.button("Run on Image")
     if result:
         st.write("Calculating results...")
